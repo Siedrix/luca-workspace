@@ -1,0 +1,17 @@
+{
+  "name": "workspace",
+  "private": true,
+  "packageManager": "pnpm@12.15.0",
+  "scripts": {
+    "dev": "pnpm --filter desktop dev",
+    "start": "pnpm --filter desktop start",
+    "build": "pnpm -r build",
+    "build:mac": "pnpm --filter desktop build:mac",
+    "build:win": "pnpm --filter desktop build:win",
+    "build:linux": "pnpm --filter desktop build:linux",
+    "build:unpack": "pnpm --filter desktop build:unpack",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format"
+  }
+}
