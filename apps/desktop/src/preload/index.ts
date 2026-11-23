@@ -1,12 +1,15 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import type { AppApi } from '../shared/types'
 
-// Custom APIs for renderer
-const api = {}
+const api: AppApi = {
+  getSettings: () => ipcRenderer.invoke('settings:get'),
+  pickFolder: () => ipcRenderer.invoke('workspace:pick-folder'),
+  setWorkspacePath: (path) => ipcRenderer.invoke('settings:set-workspace', path),
+  scanWorkspace: (path) => ipcRenderer.invoke('workspace:scan', path),
+  readWorkspaceDb: () => ipcRenderer.invoke('db:read')
+}
 
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)

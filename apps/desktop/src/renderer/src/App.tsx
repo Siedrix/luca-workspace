@@ -1,37 +1,40 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { useEffect, useState } from 'react'
+import { Home } from '@/pages/home'
+import { Onboarding } from '@/pages/onboarding'
+import { Settings } from '@/pages/settings'
+import type { AppSettings } from '../../shared/types'
 
-function App(): React.JSX.Element {
-  const [count, setCount] = useState(0)
-  const ping = (): void => window.electron.ipcRenderer.send('ping')
+type View = 'home' | 'settings'
 
-  return (
-    <main className="flex min-h-screen items-center justify-center p-8">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Electron + shadcn/ui</CardTitle>
-          <CardDescription>React, TypeScript, Tailwind v4 and electron-vite.</CardDescription>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          Clicked {count} {count === 1 ? 'time' : 'times'}.
-        </CardContent>
-        <CardFooter className="gap-2">
-          <Button onClick={() => setCount((c) => c + 1)}>Increment</Button>
-          <Button variant="outline" onClick={ping}>
-            Send IPC ping
-          </Button>
-        </CardFooter>
-      </Card>
-    </main>
-  )
+function App(): React.JSX.Element | null {
+  const [settings, setSettings] = useState<AppSettings | null>(null)
+  const [view, setView] = useState<View>('home')
+
+  useEffect(() => {
+    window.api.getSettings().then(setSettings)
+  }, [])
+
+  // Avoid flashing onboarding before settings have loaded.
+  if (!settings) return null
+
+  if (!settings.workspacePath) {
+    return <Onboarding onComplete={setSettings} />
+  }
+
+  if (view === 'settings') {
+    return (
+      <Settings
+        settings={settings}
+        onSaved={(next) => {
+          setSettings(next)
+          setView('home')
+        }}
+        onClose={() => setView('home')}
+      />
+    )
+  }
+
+  return <Home workspacePath={settings.workspacePath} onOpenSettings={() => setView('settings')} />
 }
 
 export default App
