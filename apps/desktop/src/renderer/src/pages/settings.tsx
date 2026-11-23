@@ -42,17 +42,17 @@ export function Settings({ settings, onSaved, onClose }: SettingsProps): React.J
       </header>
 
       <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-6 p-8">
-        <section className="flex min-h-0 flex-1 flex-col gap-4">
+        <section className="flex flex-1 flex-col gap-4">
           <div className="space-y-1">
             <h2 className="text-base font-medium">Work folder</h2>
             <p className="text-sm text-muted-foreground">
-              The app lists every folder directly inside this one that contains a <code>.git</code>.
-              Its data is stored in <code>.workspace.json</code> in that folder; switching folders
-              creates a new file there and leaves the old one untouched.
+              The folder that holds your git repositories. The app&apos;s data is stored in{' '}
+              <code>.workspace.json</code> in that folder; switching folders creates a new file
+              there and leaves the old one untouched.
             </p>
           </div>
           <Separator />
-          <WorkFolderPicker value={folder} onChange={setFolder} />
+          <WorkFolderPicker value={folder} onChange={setFolder} showContents={false} />
         </section>
 
         <footer className="flex items-center justify-end gap-3 border-t pt-4">

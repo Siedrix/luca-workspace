@@ -9,15 +9,22 @@ interface WorkFolderPickerProps {
   /** The folder currently shown. */
   value: string | null
   onChange: (path: string) => void
+  /** Preview the docs folder and git repositories inside the chosen folder. Defaults to true. */
+  showContents?: boolean
 }
 
 /**
- * Lets the user choose a work folder with the native dialog and previews the git
- * repositories found directly inside it. Used by onboarding and settings.
+ * Lets the user choose a work folder with the native dialog and, optionally, previews the
+ * docs folder and git repositories found directly inside it. Used by onboarding and settings.
  */
-export function WorkFolderPicker({ value, onChange }: WorkFolderPickerProps): React.JSX.Element {
+export function WorkFolderPicker({
+  value,
+  onChange,
+  showContents = true
+}: WorkFolderPickerProps): React.JSX.Element {
   const [picking, setPicking] = useState(false)
-  const { docs, repos, loading, error } = useWorkspaceScan(value)
+  // Passing null skips the scan when the preview is hidden.
+  const { docs, repos, loading, error } = useWorkspaceScan(showContents ? value : null)
 
   const choose = async (): Promise<void> => {
     setPicking(true)
@@ -41,7 +48,7 @@ export function WorkFolderPicker({ value, onChange }: WorkFolderPickerProps): Re
         </Button>
       </div>
 
-      {value && (
+      {showContents && value && (
         <div className="flex min-h-0 flex-1 flex-col gap-2">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-medium">Git repositories</h3>
